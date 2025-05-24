@@ -180,27 +180,17 @@ void handleUploadMeta()
         File meta = SD_MMC.open(jsonFile, FILE_WRITE);
         if (meta)
         {
-      meta.print("{
-");
-      meta.printf("  \"type\": \"%s\",
-", server.arg("type").c_str());
-      meta.printf("  \"colour\": \"%s\",
-", server.arg("colour").c_str());
-      meta.printf("  \"location\": \"%s\",
-", server.arg("location").c_str());
-      meta.printf("  \"symbol\": \"%s\",
-", server.arg("symbol").c_str());
-      meta.printf("  \"date\": \"%s\",
-", server.arg("date").c_str());
-      meta.printf("  \"locker\": \"%s\",
-", server.arg("locker").c_str());
-      meta.printf("  \"phone\": \"%s\",
-", server.arg("phone").c_str());
-      meta.printf("  \"image\": \"%s\"
-", imageName.c_str());
-      meta.print("}
-");
-      meta.close();
+            meta.print("{");
+            meta.printf("  \"type\": \"%s\",", server.arg("type").c_str());
+            meta.printf("  \"colour\": \"%s\",", server.arg("colour").c_str());
+            meta.printf("  \"location\": \"%s\",", server.arg("location").c_str());
+            meta.printf("  \"symbol\": \"%s\",", server.arg("symbol").c_str());
+            meta.printf("  \"date\": \"%s\",", server.arg("date").c_str());
+            meta.printf("  \"locker\": \"%s\",", server.arg("locker").c_str());
+            meta.printf("  \"phone\": \"%s\",", server.arg("phone").c_str());
+            meta.printf("  \"image\": \"%s\"", imageName.c_str());
+            meta.print("}");
+            meta.close();
         }
     }
 }

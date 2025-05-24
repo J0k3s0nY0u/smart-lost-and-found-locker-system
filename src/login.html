@@ -1,0 +1,49 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Login</title>
+    <style>
+      body {
+        height: 100vh;
+        justify-content: center;
+        background-color: aliceblue;
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      h2 {
+        text-align: center;
+        font-size: 2.8rem;
+      }
+      p,
+      a {
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: bold;
+      }
+      input {
+        margin: 5px 0;
+        width: 100%;
+        font-size: 2rem;
+      }
+      label,
+      button {
+        font-size: 2rem;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Login</h2>
+    <form action="/login" method="POST">
+      <label>Username:</label><br />
+      <input type="text" name="username" required /><br />
+      <label>Password:</label><br />
+      <input type="password" name="password" required /><br /><br />
+      <input type="submit" value="Login" />
+    </form>
+    <strong>Don't have an account? <a href="/signup">Create Acount.</a></strong>
+  </body>
+</html>

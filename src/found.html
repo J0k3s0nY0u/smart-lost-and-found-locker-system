@@ -1,0 +1,68 @@
+<!-- found.html -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Found Items</title>
+    <style>
+      body {
+        justify-content: center;
+        background-color: aliceblue;
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      h2 {
+        text-align: center;
+        font-size: 2.8rem;
+      }
+      p,
+      a {
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: bold;
+      }
+      div {
+        background-color: cadetblue;
+        color: whitesmoke;
+        height: 200px;
+        margin: 10px;
+        padding: 10px;
+        border: 1px solid royalblue;
+      }
+      img {
+        background-color: cornflowerblue;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Found Items</h2>
+    <p><a href="/dashboard">Go back</a></p>
+    <div id="items"></div>
+
+    <script>
+      fetch("/items")
+        .then((res) => res.json())
+        .then(async (files) => {
+          for (let f of files) {
+            const r = await fetch("/item_data?name=" + f);
+            const item = await r.json();
+            const mask = item.phone?.replace(
+              /(\d{3})(\d+)(\d{3})/,
+              "$1*****$3"
+            );
+            document.getElementById("items").innerHTML += `
+      <div>
+        <img src='/img/${item.image}'><br>
+        <b>Color:</b> ${item.colour}<br>
+        <b>Found:</b> ${item.location}<br>
+        <b>Phone:</b> ${mask}<br>
+      </div>`;
+          }
+        });
+    </script>
+  </body>
+</html>

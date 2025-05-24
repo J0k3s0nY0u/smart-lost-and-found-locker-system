@@ -4,34 +4,101 @@
     <title>Claim Item Questionnaire</title>
     <style>
       body {
+        background-color: aliceblue;
         font-family: sans-serif;
         padding: 20px;
       }
+      h2 {
+        text-align: center;
+        font-size: 2.8rem;
+      }
+      p,
+      a {
+        cursor: pointer;
+        text-decoration: none;
+        text-align: center;
+        font-size: 1.3rem;
+        font-weight: bold;
+      }
       input,
       select {
-        width: 100%;
-        margin-bottom: 10px;
+        margin: 5px 0;
+        font-size: 2rem;
+        width: 80%;
+      }
+      img {
+        background-color: cornflowerblue;
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        margin-top: 10px;
+      }
+      label,
+      button {
+        font-size: 2rem;
+        font-weight: bold;
       }
     </style>
   </head>
   <body>
     <h2>📝 Claim Lost Item</h2>
-
+    <p><a href="/dashboard">Go back</a></p>
     <form id="questionnaire">
-      <label>Color:</label>
-      <input type="text" id="color" required />
+      <label>Type of item:</label>
+      <select id="type" style="font-size: 1.3rem" required>
+        <option value="">--Select--</option>
+        <option value="phone">phone</option>
+        <option value="laptop">laptop</option>
+        <option value="earbud">earbud</option>
+        <option value="book">book</option>
+        <option value="bag">bag</option>
+        <option value="glasses">glasses</option>
+        <option value="shoe">shoe</option>
+        <option value="charger">charger</option>
+        <option value="powerbank">powerbank</option>
+        <option value="waterbottle">water bottle</option>
+        <option value="card">card</option>
+        <option value="wallet">wallet</option>
+        <option value="key">key</option></select
+      ><br />
+
+      <label>Colour:</label>
+      <select id="colour" required>
+        <option value="">--Select--</option>
+        <option value="white">white</option>
+        <option value="black">black</option>
+        <option value="blue">blue</option>
+        <option value="green">green</option>
+        <option value="red">red</option>
+        <option value="purple">purple</option>
+        <option value="indigo">indigo</option>
+        <option value="violet">violet</option>
+        <option value="orange">orange</option>
+        <option value="yellow">yellow</option></select
+      ><br />
 
       <label>Where was it found?</label>
-      <input type="text" id="location" required />
+      <select id="location" required>
+        <option value="">--Select--</option>
+        <option value="auditorium">Auditorium</option>
+        <option value="a-wing">A Wing</option>
+        <option value="b-wing">B Wing</option>
+        <option value="c-wing">C Wing</option>
+        <option value="d-wing">D Wing</option>
+        <option value="workshop">Workshop</option>
+        <option value="a-wing-lab">A Wing Lab</option>
+        <option value="b-wing-lab">B Wing Lab</option>
+        <option value="c-wing-lab">C Wing Lab</option>
+        <option value="d-wing-lab">D Wing Lab</option>
+        <option value="couridor">Couridor</option>
+        <option value="not-sure">Not Sure</option></select
+      ><br />
 
-      <label>Name or Symbol on Item:</label>
-      <input type="text" id="symbol" required />
+      <label>Name/symbol on item?</label>
+      <input type="text" id="symbol" required /><br />
 
-      <label>Date Found:</label>
-      <input type="date" id="date" required />
-
-      <label>Item Type:</label>
-      <input type="text" id="type" required />
+      <label>Found Date:</label>
+      <input type="date" id="date" required /><br />
 
       <button type="submit">Submit Answers</button>
     </form>
@@ -72,11 +139,11 @@
           if (score >= 4) {
             result.innerHTML = `<h3>✅ Match found!</h3>
           <p>Locker: ${data.locker}</p>
-          <img src='/img/${data.image}' width='160'><br>
+          <img src='/img/${data.image}'><br>
           <p>Sending code to: ${data.phone}</p>`;
 
             await fetch(
-              `http://ESP32-WROOM-IP/send_sms?phone=${data.phone}&code=${data.code}&locker=${data.locker}`
+              `http://192.168.160.23/send_sms?phone=${data.phone}&code=${data.code}&locker=${data.locker}`
             );
             return;
           }
