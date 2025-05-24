@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Claim Item Questionnaire</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      input,
+      select {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>📝 Claim Lost Item</h2>
+
+    <form id="questionnaire">
+      <label>Color:</label>
+      <input type="text" id="color" required />
+
+      <label>Where was it found?</label>
+      <input type="text" id="location" required />
+
+      <label>Name or Symbol on Item:</label>
+      <input type="text" id="symbol" required />
+
+      <label>Date Found:</label>
+      <input type="date" id="date" required />
+
+      <label>Item Type:</label>
+      <input type="text" id="type" required />
+
+      <button type="submit">Submit Answers</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+      const form = document.getElementById("questionnaire");
+      const result = document.getElementById("result");
+
+      async function getItemData(name) {
+        const res = await fetch(`/item_data?name=${name}`);
+        return res.json();
+      }
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+        const userAnswers = {
+          color: color.value.trim().toLowerCase(),
+          location: location.value.trim().toLowerCase(),
+          symbol: symbol.value.trim().toLowerCase(),
+          date: date.value,
+          type: type.value.trim().toLowerCase(),
+        };
+
+        const files = await fetch("/items").then((res) => res.json());
+
+        for (const fname of files) {
+          const data = await getItemData(fname);
+
+          let score = 0;
+          if (data.colour?.toLowerCase() === userAnswers.color) score++;
+          if (data.location?.toLowerCase() === userAnswers.location) score++;
+          if (data.symbol?.toLowerCase() === userAnswers.symbol) score++;
+          if (data.date === userAnswers.date) score++;
+          if (data.type?.toLowerCase() === userAnswers.type) score++;
+
+          if (score >= 4) {
+            result.innerHTML = `<h3>✅ Match found!</h3>
+          <p>Locker: ${data.locker}</p>
+          <img src='/img/${data.image}' width='160'><br>
+          <p>Sending code to: ${data.phone}</p>`;
+
+            await fetch(
+              `http://ESP32-WROOM-IP/send_sms?phone=${data.phone}&code=${data.code}&locker=${data.locker}`
+            );
+            return;
+          }
+        }
+        result.innerHTML = "<h3>❌ No matching item found. Try again.</h3>";
+      };
+    </script>
+  </body>
+</html>

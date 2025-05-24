@@ -4,6 +4,7 @@
     <title>Admin Locker Panel</title>
     <style>
       body {
+        background-color: aliceblue;
         font-family: sans-serif;
         padding: 20px;
       }
@@ -15,6 +16,14 @@
       #preview {
         margin-top: 10px;
       }
+      label, button {
+        font-size: 1.3rem; 
+        font-weight: bold;
+      }
+      select, input {
+        font-size: 1.3rem;
+        width: 80%;
+      }
     </style>
   </head>
   <body>
@@ -25,11 +34,55 @@
       <input type="file" id="image" accept="image/*" required /><br />
       <img id="preview" width="200" /><br />
 
-      <label>Color:</label>
-      <input type="text" id="color" required /><br />
+      <label>Type of item:</label>
+      <select id="type" style="font-size: 1.3rem;" required>
+        <option value="">--Select--</option>
+        <option value="phone">phone</option>
+        <option value="laptop">laptop</option>
+        <option value="earbud">earbud</option>
+        <option value="book">book</option>
+        <option value="bag">bag</option>
+        <option value="glasses">glasses</option>
+        <option value="shoe">shoe</option>
+        <option value="charger">charger</option>
+        <option value="powerbank">powerbank</option>
+        <option value="waterbottle">water bottle</option>
+        <option value="card">card</option>
+        <option value="wallet">wallet</option>
+        <option value="key">key</option></select>
+    </select><br />
+
+      <label>Colour:</label>
+      <select id="colour" required>
+        <option value="">--Select--</option>
+        <option value="white">white</option>
+        <option value="black">black</option>
+        <option value="blue">blue</option>
+        <option value="green">green</option>
+        <option value="red">red</option>
+        <option value="purple">purple</option>
+        <option value="indigo">indigo</option>
+        <option value="violet">violet</option>
+        <option value="orange">orange</option>
+        <option value="yellow">yellow</option>
+        </select><br />
 
       <label>Where was it found?</label>
-      <input type="text" id="location" required /><br />
+      <select id="location" required>
+        <option value="">--Select--</option>
+        <option value="auditorium">Auditorium</option>
+        <option value="a-wing">A Wing</option>
+        <option value="b-wing">B Wing</option>
+        <option value="c-wing">C Wing</option>
+        <option value="d-wing">D Wing</option>
+        <option value="workshop">Workshop</option>
+        <option value="a-wing-lab">A Wing Lab</option>
+        <option value="b-wing-lab">B Wing Lab</option>
+        <option value="c-wing-lab">C Wing Lab</option>
+        <option value="d-wing-lab">D Wing Lab</option>
+        <option value="couridor">Couridor</option>
+        <option value="not-sure">Not Sure</option>
+    </select><br />
 
       <label>Name/symbol on item?</label>
       <input type="text" id="symbol" required /><br />
@@ -51,10 +104,10 @@
         <option value="9">9</option>
         <option value="10">A</option>
         <option value="11">B</option>
-        <option value="12">C</option></select
-      ><br />
+        <option value="12">C</option>
+    </select><br />
 
-      <label>Owner Phone:</label>
+      <label>Owner Phone Number:</label>
       <input type="tel" id="phone" required /><br />
 
       <button type="submit">Upload & Assign</button>
@@ -81,7 +134,8 @@
 
         const formData = new FormData();
         formData.append("image", imgInput.files[0]);
-        formData.append("color", color.value);
+        formData.append("type", type.value);
+        formData.append("colour", colour.value);
         formData.append("location", location.value);
         formData.append("symbol", symbol.value);
         formData.append("date", date.value);
@@ -95,7 +149,7 @@
 
         // Send to ESP32-WROOM from browser
         fetch(
-          "http://<ESP32-WROOM-IP>/send_sms?phone=" +
+          "http://192.168.160.23/send_sms?phone=" +
             phone +
             "&code=" +
             json.code +
