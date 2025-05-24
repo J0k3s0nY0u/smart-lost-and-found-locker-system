@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Admin Locker Panel</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      input,
+      select {
+        margin: 5px 0;
+        width: 100%;
+      }
+      #preview {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>📦 Upload Lost Item</h2>
+
+    <form id="uploadForm">
+      <label>Item Image:</label>
+      <input type="file" id="image" accept="image/*" required /><br />
+      <img id="preview" width="200" /><br />
+
+      <label>Color:</label>
+      <input type="text" id="color" required /><br />
+
+      <label>Where was it found?</label>
+      <input type="text" id="location" required /><br />
+
+      <label>Name/symbol on item?</label>
+      <input type="text" id="symbol" required /><br />
+
+      <label>Found Date:</label>
+      <input type="date" id="date" required /><br />
+
+      <label>Assign Locker #:</label>
+      <select id="locker" required>
+        <option value="">--Select--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">A</option>
+        <option value="11">B</option>
+        <option value="12">C</option></select
+      ><br />
+
+      <label>Owner Phone:</label>
+      <input type="tel" id="phone" required /><br />
+
+      <button type="submit">Upload & Assign</button>
+    </form>
+
+    <p id="result"></p>
+
+    <script>
+      const imgInput = document.getElementById("image");
+      const preview = document.getElementById("preview");
+      const form = document.getElementById("uploadForm");
+      const result = document.getElementById("result");
+
+      imgInput.onchange = () => {
+        const file = imgInput.files[0];
+        if (file) preview.src = URL.createObjectURL(file);
+      };
+
+      form.onsubmit = async (e) => {
+        e.preventDefault();
+
+        const phone = phone.value;
+        const locker = locker.value;
+
+        const formData = new FormData();
+        formData.append("image", imgInput.files[0]);
+        formData.append("color", color.value);
+        formData.append("location", location.value);
+        formData.append("symbol", symbol.value);
+        formData.append("date", date.value);
+        formData.append("locker", locker);
+        formData.append("phone", phone);
+
+        const res = await fetch(
+          "/send_code?phone=" + phone + "&locker=" + locker
+        );
+        const json = await res.json();
+
+        // Send to ESP32-WROOM from browser
+        fetch(
+          "http://<ESP32-WROOM-IP>/send_sms?phone=" +
+            phone +
+            "&code=" +
+            json.code +
+            "&locker=" +
+            locker
+        );
+
+        result.innerText = `Code ${json.code} generated for locker ${locker}`;
+      };
+    </script>
+  </body>
+</html>
