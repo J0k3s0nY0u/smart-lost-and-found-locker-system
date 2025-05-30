@@ -1,51 +1,43 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Claim Item Questionnaire</title>
+    <title>Item Claim Questionnaire</title>
     <style>
       body {
         background-color: aliceblue;
         font-family: sans-serif;
-        padding: 20px;
+        margin: 20px;
       }
-      h2 {
-        text-align: center;
-        font-size: 2.8rem;
-      }
-      p,
-      a {
-        cursor: pointer;
-        text-decoration: none;
-        text-align: center;
-        font-size: 1.3rem;
-        font-weight: bold;
+      label {
+        display: block;
+        margin-top: 10px;
       }
       input,
       select {
-        margin: 5px 0;
-        font-size: 2rem;
-        width: 80%;
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        font-size: 1.2rem;
       }
-      img {
-        background-color: cornflowerblue;
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        margin-top: 10px;
-      }
-      label,
       button {
-        font-size: 2rem;
+        margin-top: 15px;
+        padding: 10px 20px;
+        font-size: 1.2rem;
+      }
+      #result {
+        margin-top: 20px;
+        color: green;
         font-weight: bold;
       }
     </style>
   </head>
   <body>
-    <h2>📝 Claim Lost Item</h2>
     <p><a href="/dashboard">Go back</a></p>
-    <form id="questionnaire">
+
+    <h1 style="text-align: center">Verify Lost Item</h1>
+    <form id="form">
       <label>Type of item:</label>
-      <select id="type" style="font-size: 1.3rem" required>
+      <select name="type" style="font-size: 1.3rem" required>
         <option value="">--Select--</option>
         <option value="phone">phone</option>
         <option value="laptop">laptop</option>
@@ -63,7 +55,7 @@
       ><br />
 
       <label>Colour:</label>
-      <select id="colour" required>
+      <select name="colour" required>
         <option value="">--Select--</option>
         <option value="white">white</option>
         <option value="black">black</option>
@@ -77,8 +69,8 @@
         <option value="yellow">yellow</option></select
       ><br />
 
-      <label>Where was it found?</label>
-      <select id="location" required>
+      <label>Where was it lost?</label>
+      <select name="location" required>
         <option value="">--Select--</option>
         <option value="auditorium">Auditorium</option>
         <option value="a-wing">A Wing</option>
@@ -94,61 +86,49 @@
         <option value="not-sure">Not Sure</option></select
       ><br />
 
-      <label>Name/symbol on item?</label>
-      <input type="text" id="symbol" required /><br />
+      <label>Symbol / Name: <input name="symbol" required /></label><br />
 
-      <label>Found Date:</label>
-      <input type="date" id="date" required /><br />
-
-      <button type="submit">Submit Answers</button>
+      <label>Lost Date: <input type="date" name="date" required /></label>
+      <button type="submit">Submit Answers</button><br />
     </form>
-
-    <p id="result"></p>
+    <div id="result"></div>
 
     <script>
-      const form = document.getElementById("questionnaire");
+      const form = document.getElementById("form");
       const result = document.getElementById("result");
-
-      async function getItemData(name) {
-        const res = await fetch(`/item_data?name=${name}`);
-        return res.json();
-      }
 
       form.onsubmit = async (e) => {
         e.preventDefault();
-        const userAnswers = {
-          color: color.value.trim().toLowerCase(),
-          location: location.value.trim().toLowerCase(),
-          symbol: symbol.value.trim().toLowerCase(),
-          date: date.value,
-          type: type.value.trim().toLowerCase(),
-        };
+        const answers = Object.fromEntries(new FormData(form));
+        const res = await fetch("/items");
+        const items = await res.json();
 
-        const files = await fetch("/items").then((res) => res.json());
-
-        for (const fname of files) {
-          const data = await getItemData(fname);
+        for (const file of items) {
+          const meta = await fetch("/item_data?name=" + file).then((r) =>
+            r.json()
+          );
 
           let score = 0;
-          if (data.colour?.toLowerCase() === userAnswers.color) score++;
-          if (data.location?.toLowerCase() === userAnswers.location) score++;
-          if (data.symbol?.toLowerCase() === userAnswers.symbol) score++;
-          if (data.date === userAnswers.date) score++;
-          if (data.type?.toLowerCase() === userAnswers.type) score++;
+          if (answers.type.toLowerCase() === meta.type.toLowerCase()) score++;
+          if (answers.colour.toLowerCase() === meta.colour.toLowerCase())
+            score++;
+          if (answers.location.toLowerCase() === meta.location.toLowerCase())
+            score++;
+          if (answers.symbol.toLowerCase() === meta.symbol.toLowerCase())
+            score++;
+          if (answers.date === meta.date) score++;
 
           if (score >= 4) {
-            result.innerHTML = `<h3>✅ Match found!</h3>
-          <p>Locker: ${data.locker}</p>
-          <img src='/img/${data.image}'><br>
-          <p>Sending code to: ${data.phone}</p>`;
-
+            const code = Math.floor(100000 + Math.random() * 900000);
             await fetch(
-              `http://192.168.160.23/send_sms?phone=${data.phone}&code=${data.code}&locker=${data.locker}`
+              `http://192.168.160.48/send_code?locker=${meta.locker}&code=${code}`
             );
+            result.innerHTML = `Success! Please go to the locker and input code: <b>${code}</b>`;
             return;
           }
         }
-        result.innerHTML = "<h3>❌ No matching item found. Try again.</h3>";
+
+        result.innerHTML = `<span style="color:red;">No matching item found.</span>`;
       };
     </script>
   </body>

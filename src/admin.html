@@ -1,41 +1,69 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Admin Locker Panel</title>
+    <title>Admin Locker Dashboard</title>
     <style>
       body {
         background-color: aliceblue;
         font-family: sans-serif;
-        padding: 20px;
+        margin: 20px;
+      }
+      h1 {
+        margin-bottom: 5px;
+      }
+      form,
+      .card-grid {
+        margin-top: 20px;
       }
       input,
       select {
-        margin: 5px 0;
+        display: block;
         width: 100%;
-      }
-      #preview {
-        margin-top: 10px;
-      }
-      label, button {
-        font-size: 1.3rem; 
-        font-weight: bold;
-      }
-      select, input {
+        margin: 5px 0;
         font-size: 1.3rem;
-        width: 80%;
+      }
+      button {
+        margin-top: 10px;
+        padding: 8px 16px;
+        font-size: 1.3rem;
+      }
+      .card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 10px;
+      }
+      .card {
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 5px;
+        background: #f9f9f9;
+        font-size: 1rem;
+      }
+      .card img {
+        width: 100%;
+        height: auto;
+        border-radius: 5px;
       }
     </style>
   </head>
   <body>
-    <h2>📦 Upload Lost Item</h2>
+    <h1 style="text-align: center">Admin Dashboard</h1>
+    <h2><a href="/locker_status.html">🔒 View Locker States</a></h2>
 
     <form id="uploadForm">
+      <h3>Upload Found Item</h3>
       <label>Item Image:</label>
-      <input type="file" id="image" accept="image/*" required /><br />
+      <input
+        type="file"
+        name="image"
+        id="image"
+        accept="image/*"
+        required
+      /><br />
       <img id="preview" width="200" /><br />
 
       <label>Type of item:</label>
-      <select id="type" style="font-size: 1.3rem;" required>
+      <select name="type" style="font-size: 1.3rem" required>
         <option value="">--Select--</option>
         <option value="phone">phone</option>
         <option value="laptop">laptop</option>
@@ -49,11 +77,11 @@
         <option value="waterbottle">water bottle</option>
         <option value="card">card</option>
         <option value="wallet">wallet</option>
-        <option value="key">key</option></select>
-    </select><br />
+        <option value="key">key</option></select
+      ><br />
 
       <label>Colour:</label>
-      <select id="colour" required>
+      <select name="colour" required>
         <option value="">--Select--</option>
         <option value="white">white</option>
         <option value="black">black</option>
@@ -64,11 +92,11 @@
         <option value="indigo">indigo</option>
         <option value="violet">violet</option>
         <option value="orange">orange</option>
-        <option value="yellow">yellow</option>
-        </select><br />
+        <option value="yellow">yellow</option></select
+      ><br />
 
       <label>Where was it found?</label>
-      <select id="location" required>
+      <select name="location" required>
         <option value="">--Select--</option>
         <option value="auditorium">Auditorium</option>
         <option value="a-wing">A Wing</option>
@@ -81,45 +109,47 @@
         <option value="c-wing-lab">C Wing Lab</option>
         <option value="d-wing-lab">D Wing Lab</option>
         <option value="couridor">Couridor</option>
-        <option value="not-sure">Not Sure</option>
-    </select><br />
+        <option value="not-sure">Not Sure</option></select
+      ><br />
 
       <label>Name/symbol on item?</label>
-      <input type="text" id="symbol" required /><br />
+      <input
+        type="text"
+        name="symbol"
+        placeholder="Symbol / Name on item"
+        required
+      /><br />
 
       <label>Found Date:</label>
-      <input type="date" id="date" required /><br />
+      <input type="date" name="date" required /><br />
 
       <label>Assign Locker #:</label>
-      <select id="locker" required>
-        <option value="">--Select--</option>
-        <option value="1">1</option>
-        <option value="2">2</option>
-        <option value="3">3</option>
-        <option value="4">4</option>
-        <option value="5">5</option>
-        <option value="6">6</option>
-        <option value="7">7</option>
-        <option value="8">8</option>
-        <option value="9">9</option>
-        <option value="10">A</option>
-        <option value="11">B</option>
-        <option value="12">C</option>
-    </select><br />
+      <select name="locker" required>
+        <option value="">Assign Locker...</option>
+        <option value="0">Locker 1</option>
+        <option value="1">Locker 2</option>
+        <option value="2">Locker 3</option>
+        <option value="3">Locker 4</option>
+        <option value="4">Locker 5</option>
+        <option value="5">Locker 6</option>
+        <option value="6">Locker 7</option>
+        <option value="7">Locker 8</option>
+        <option value="8">Locker 9</option>
+        <option value="9">Locker 10</option>
+        <option value="10">Locker 11</option>
+        <option value="11">Locker 12</option></select
+      ><br />
 
-      <label>Owner Phone Number:</label>
-      <input type="tel" id="phone" required /><br />
-
-      <button type="submit">Upload & Assign</button>
+      <button type="submit">Submit Item</button>
     </form>
 
-    <p id="result"></p>
+    <div class="card-grid" id="uploadGallery"></div>
 
     <script>
       const imgInput = document.getElementById("image");
       const preview = document.getElementById("preview");
       const form = document.getElementById("uploadForm");
-      const result = document.getElementById("result");
+      const gallery = document.getElementById("uploadGallery");
 
       imgInput.onchange = () => {
         const file = imgInput.files[0];
@@ -128,37 +158,44 @@
 
       form.onsubmit = async (e) => {
         e.preventDefault();
+        const data = new FormData(form);
+        const locker = data.get("locker");
+        const code = Math.floor(100000 + Math.random() * 900000);
+        data.append("code", code);
 
-        const phone = phone.value;
-        const locker = locker.value;
+        const upload = await fetch("/upload", { method: "POST", body: data });
+        if (upload.ok) {
+          alert("Upload successful");
 
-        const formData = new FormData();
-        formData.append("image", imgInput.files[0]);
-        formData.append("type", type.value);
-        formData.append("colour", colour.value);
-        formData.append("location", location.value);
-        formData.append("symbol", symbol.value);
-        formData.append("date", date.value);
-        formData.append("locker", locker);
-        formData.append("phone", phone);
-
-        const res = await fetch(
-          "/send_code?phone=" + phone + "&locker=" + locker
-        );
-        const json = await res.json();
-
-        // Send to ESP32-WROOM from browser
-        fetch(
-          "http://192.168.160.23/send_sms?phone=" +
-            phone +
-            "&code=" +
-            json.code +
-            "&locker=" +
-            locker
-        );
-
-        result.innerText = `Code ${json.code} generated for locker ${locker}`;
+          // Send code to ESP32-WROOM
+          await fetch(
+            "http://192.168.160.48/send_code?locker=" + locker + "&code=" + code
+          );
+        } else {
+          alert("Upload failed");
+        }
+        form.reset();
       };
+
+      async function loadItems() {
+        const res = await fetch("/items");
+        const files = await res.json();
+        for (const file of files) {
+          const meta = await fetch("/item_data?name=" + file).then((r) =>
+            r.json()
+          );
+          gallery.innerHTML += `
+          <div class="card">
+            <img src="/img/${meta.image}" alt="item">
+            <b>${meta.type}</b><br>
+            Locker: ${meta.locker}<br>
+            Found: ${meta.date}
+          </div>`;
+        }
+      }
+
+      loadItems();
     </script>
   </body>
 </html>
+<!-- This is the admin dashboard for managing locker items -->

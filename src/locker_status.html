@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Locker States</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+        gap: 10px;
+      }
+      .box {
+        border: 1px solid #ccc;
+        padding: 10px;
+        border-radius: 6px;
+        background-color: #f9f9f9;
+        text-align: center;
+      }
+      .pending {
+        background-color: #ffe0cc;
+      }
+      .locked {
+        background-color: #f2f2f2;
+      }
+      .unlocked {
+        background-color: #d4fdd4;
+      }
+      h1 {
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Locker State Dashboard</h1>
+    <div class="grid" id="lockerGrid"></div>
+
+    <script>
+      async function loadLockers() {
+        const res = await fetch("http://192.168.160.24/locker_status");
+        const data = await res.json();
+
+        const grid = document.getElementById("lockerGrid");
+        grid.innerHTML = "";
+
+        for (let i = 1; i <= 12; i++) {
+          const state = data["locker" + i];
+          const box = document.createElement("div");
+          box.className = "box " + state;
+          box.innerHTML = `<b>Locker ${i}</b><br>Status: ${state}`;
+
+          // Show code only if pending
+          if (state === "pending") {
+            const code = await fetch(`/locker_code?locker=${i - 1}`).then((r) =>
+              r.text()
+            );
+            box.innerHTML += `<br><b>Code:</b> ${code}`;
+          }
+
+          grid.appendChild(box);
+        }
+      }
+
+      loadLockers();
+      setInterval(loadLockers, 5000);
+    </script>
+  </body>
+</html>
