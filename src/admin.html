@@ -5,6 +5,7 @@
     <style>
       body {
         background-color: aliceblue;
+        color: black;
         font-family: sans-serif;
         margin: 20px;
       }
@@ -165,7 +166,7 @@
 
         const upload = await fetch("/upload", { method: "POST", body: data });
         if (upload.ok) {
-          alert("Upload successful");
+          alert("Upload successful" + locker + "Code: " + code);
 
           // Send code to ESP32-WROOM
           await fetch(
